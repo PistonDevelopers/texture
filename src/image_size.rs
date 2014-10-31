@@ -1,9 +1,21 @@
 
-/// Must be implemented by all images to be used with graphics back-end.
-///
-/// Rust-Graphics only needs to know the size.
+/// Must be implemented by all images to be used with generic texture algorithms.
 pub trait ImageSize {
     /// Get the image size.
     fn get_size(&self) -> (u32, u32);
+
+    /// Gets the image width.
+    #[inline(always)]
+    fn get_width(&self) -> u32 {
+        let (w, _) = self.get_size();
+        w
+    }
+
+    /// Gets the image height.
+    #[inline(always)]
+    fn get_height(&self) -> u32 {
+        let (_, h) = self.get_size();
+        h
+    }
 }
 
