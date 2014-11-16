@@ -2,3 +2,5 @@ texture [![Build Status](https://travis-ci.org/PistonDevelopers/texture.svg?bran
 =======
 
 A library for texture conventions
+
+[How to contribute](https://github.com/PistonDevelopers/piston/blob/master/CONTRIBUTING.md)
