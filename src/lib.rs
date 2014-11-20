@@ -1,19 +1,24 @@
 #![deny(missing_docs)]
 
 //! A library for texture conventions.
-//!
-//! Texture trait constructors should pass in a closure like this:
-//!
-//! ```ignore
-//! f: |&mut D, Self| -> Self
-//! ```
-//!
-//! This is a convention such that libraries that construct textures
-//! and store them separately from the texture device,
-//! lets the caller perform additional operations such as mipmap generation.
 
-pub use image_size::ImageSize;
-pub use from_memory_alpha::FromMemoryAlpha;
+/// Implemented by all images to be used with generic algorithms.
+pub trait ImageSize {
+    /// Get the image size.
+    fn get_size(&self) -> (u32, u32);
 
-mod image_size;
-mod from_memory_alpha;
+    /// Gets the image width.
+    #[inline(always)]
+    fn get_width(&self) -> u32 {
+        let (w, _) = self.get_size();
+        w
+    }
+
+    /// Gets the image height.
+    #[inline(always)]
+    fn get_height(&self) -> u32 {
+        let (_, h) = self.get_size();
+        h
+    }
+}
+
