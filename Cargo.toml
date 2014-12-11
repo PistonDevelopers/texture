@@ -1,11 +1,16 @@
 [package]
 
-name = "texture"
+name = "piston-texture"
 version = "0.0.0"
 authors = [
     "bvssvni <bvssvni@gmail.com>"
 ]
-tags = []
+tags = ["texture", "generic"]
+description = "A library for texture conventions"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/pistondevelopers/texture.git"
+homepage = "https://github.com/pistondevelopers/texture"
 
 [lib]
 
