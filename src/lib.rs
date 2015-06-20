@@ -8,6 +8,8 @@ use std::fmt::{ Display, Formatter, Error };
 use std::path::Path;
 use image::{ RgbaImage, ImageError, DynamicImage };
 
+pub mod ops;
+
 /// Implemented by all images to be used with generic algorithms.
 pub trait ImageSize {
     /// Get the image size.
