@@ -127,14 +127,12 @@ impl Display for TextureError {
 }
 
 /// Unified interface creating/updating texture over backends.
-pub trait TextureWithFactory: ImageSize + Sized {
-    /// Texture factory.
-    type Factory;
+pub trait TextureWithFactory<F>: ImageSize + Sized {
 
     /// Create texture from path.
     #[inline(always)]
     fn from_path<P: AsRef<Path>>(
-        device: &mut Self::Factory,
+        device: &mut F,
         path: P,
         settings: &TextureSettings
     ) -> TextureResult<Self> {
@@ -149,7 +147,7 @@ pub trait TextureWithFactory: ImageSize + Sized {
     /// Create texture from RGBA image.
     #[inline(always)]
     fn from_image(
-        device: &mut Self::Factory,
+        device: &mut F,
         image: &RgbaImage,
         settings: &TextureSettings
     ) -> TextureResult<Self> {
@@ -159,7 +157,7 @@ pub trait TextureWithFactory: ImageSize + Sized {
 
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
     fn from_memory(
-        device: &mut Self::Factory,
+        device: &mut F,
         memory: &[u8],
         width: usize,
         channels: usize,
@@ -170,7 +168,7 @@ pub trait TextureWithFactory: ImageSize + Sized {
     #[inline(always)]
     fn update_from_path<P: AsRef<Path>>(
         &mut self,
-        device: &mut Self::Factory,
+        device: &mut F,
         path: P
     ) -> TextureResult<()> {
         let image = try!(image::open(path));
@@ -185,7 +183,7 @@ pub trait TextureWithFactory: ImageSize + Sized {
     #[inline(always)]
     fn update_from_image(
         &mut self,
-        device: &mut Self::Factory,
+        device: &mut F,
         image: &RgbaImage
     ) -> TextureResult<()> {
         let width = image.width() as usize;
@@ -195,7 +193,7 @@ pub trait TextureWithFactory: ImageSize + Sized {
     /// Update texture from memory buffer. Supported only RGBA and alpha channels images.
     fn update_from_memory(
         &mut self,
-        device: &mut Self::Factory,
+        device: &mut F,
         memory: &[u8],
         width: usize,
         channels: usize
@@ -203,7 +201,7 @@ pub trait TextureWithFactory: ImageSize + Sized {
 }
 
 /// Interface for device independent backends.
-pub trait Texture: TextureWithFactory<Factory = ()> + Sized {
+pub trait Texture: TextureWithFactory<()> + Sized {
     /// Create texture from path.
     #[inline(always)]
     fn from_path<P: AsRef<Path>>(
@@ -257,4 +255,4 @@ pub trait Texture: TextureWithFactory<Factory = ()> + Sized {
     }
 }
 
-impl<T: TextureWithFactory<Factory = ()>> Texture for T {}
+impl<T: TextureWithFactory<()>> Texture for T {}
