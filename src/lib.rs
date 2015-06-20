@@ -28,6 +28,71 @@ pub trait ImageSize {
     }
 }
 
+
+/// Texture creation parameters.
+pub struct TextureSettings {
+    flip_vertical: bool,
+    convert_gamma: bool,
+    /// Compress on GPU.
+    compress: bool,
+    /// Generate mipmap chain.
+    generate_mipmap: bool,
+}
+
+impl TextureSettings {
+    /// Create default settings.
+    pub fn new() -> TextureSettings {
+        TextureSettings {
+            flip_vertical: false,
+            convert_gamma: false,
+            compress: false,
+            generate_mipmap: false,
+        }
+    }
+
+    /// Gets whether to flip vertical.
+    pub fn get_flip_vertical(&self) -> bool { self.flip_vertical }
+    /// Sets flip vertical.
+    pub fn set_flip_vertical(&mut self, val: bool) { self.flip_vertical = val; }
+    /// Sets flip vertical.
+    pub fn flip_vertical(mut self, val: bool) -> Self {
+        self.set_flip_vertical(val);
+        self
+    }
+
+    /// Gets wheter to convert gamma, treated as sRGB color space.
+    pub fn get_convert_gamma(&self) -> bool { self.convert_gamma }
+    /// Sets convert gamma.
+    pub fn set_convert_gamma(&mut self, val: bool) { self.convert_gamma = val; }
+    /// Sets convert gamma.
+    pub fn convert_gamma(mut self, val: bool) -> Self {
+        self.set_convert_gamma(val);
+        self
+    }
+
+    /// Gets wheter compress on the GPU.
+    pub fn get_compress(&self) -> bool { self.compress }
+    /// Sets compress.
+    pub fn set_compress(&mut self, val: bool) { self.compress = val; }
+    /// Sets compress.
+    pub fn compress(mut self, val: bool) -> Self {
+        self.set_compress(val);
+        self
+    }
+
+    /// Gets generate mipmap.
+    pub fn get_generate_mipmap(&self) -> bool { self.generate_mipmap }
+    /// Sets generate mipmap.
+    pub fn set_generate_mipmap(&mut self, val: bool) {
+        self.generate_mipmap = val;
+    }
+    /// Sets generate mipmap.
+    pub fn generate_mipmap(mut self, val: bool) -> Self {
+        self.set_generate_mipmap(val);
+        self
+    }
+}
+
 /// Result of an texture creating/updating process.
 pub type TextureResult<T> = Result<T, TextureError>;
 
@@ -41,7 +106,7 @@ pub enum TextureError {
     InvalidNumberOfChannels(usize),
 
     /// The error in backend factory.
-    FactoryError(String)
+    FactoryError(String),
 }
 
 impl From<ImageError> for TextureError {
@@ -70,24 +135,26 @@ pub trait TextureWithFactory: ImageSize + Sized {
     #[inline(always)]
     fn from_path<P: AsRef<Path>>(
         device: &mut Self::Factory,
-        path: P
+        path: P,
+        settings: &TextureSettings
     ) -> TextureResult<Self> {
         let image = try!(image::open(path));
         let image = match image {
             DynamicImage::ImageRgba8(image) => image,
             image => image.to_rgba()
         };
-        Self::from_image(device, &image)
+        Self::from_image(device, &image, settings)
     }
 
     /// Create texture from RGBA image.
     #[inline(always)]
     fn from_image(
         device: &mut Self::Factory,
-        image: &RgbaImage
+        image: &RgbaImage,
+        settings: &TextureSettings
     ) -> TextureResult<Self> {
         let width = image.width() as usize;
-        Self::from_memory(device, image, width, 4)
+        Self::from_memory(device, image, width, 4, settings)
     }
 
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
@@ -95,7 +162,8 @@ pub trait TextureWithFactory: ImageSize + Sized {
         device: &mut Self::Factory,
         memory: &[u8],
         width: usize,
-        channels: usize
+        channels: usize,
+        settings: &TextureSettings
     ) -> TextureResult<Self>;
 
     /// Update texture from path.
@@ -138,14 +206,20 @@ pub trait TextureWithFactory: ImageSize + Sized {
 pub trait Texture: TextureWithFactory<Factory = ()> + Sized {
     /// Create texture from path.
     #[inline(always)]
-    fn from_path<P: AsRef<Path>>(path: P) -> TextureResult<Self> {
-        TextureWithFactory::from_path(&mut (), path)
+    fn from_path<P: AsRef<Path>>(
+        path: P,
+        settings: &TextureSettings
+    ) -> TextureResult<Self> {
+        TextureWithFactory::from_path(&mut (), path, settings)
     }
 
     /// Create texture from RGBA image.
     #[inline(always)]
-    fn from_image(image: &RgbaImage) -> TextureResult<Self> {
-        TextureWithFactory::from_image(&mut (), image)
+    fn from_image(
+        image: &RgbaImage,
+        settings: &TextureSettings
+    ) -> TextureResult<Self> {
+        TextureWithFactory::from_image(&mut (), image, settings)
     }
 
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
@@ -153,9 +227,10 @@ pub trait Texture: TextureWithFactory<Factory = ()> + Sized {
     fn from_memory(
         memory: &[u8],
         width: usize,
-        channels: usize
+        channels: usize,
+        settings: &TextureSettings
     ) -> TextureResult<Self> {
-        TextureWithFactory::from_memory(&mut (), memory, width, channels)
+        TextureWithFactory::from_memory(&mut (), memory, width, channels, settings)
     }
 
     /// Update texture from path.
