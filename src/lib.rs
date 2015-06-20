@@ -103,7 +103,7 @@ pub enum TextureError {
     ImageError(ImageError),
 
     /// The channels number error.
-    InvalidNumberOfChannels(usize),
+    InvalidNumberOfChannels(u8),
 
     /// The error in backend factory.
     FactoryError(String),
@@ -151,16 +151,16 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
         image: &RgbaImage,
         settings: &TextureSettings
     ) -> TextureResult<Self> {
-        let width = image.width() as usize;
-        Self::from_memory(device, image, width, 4, settings)
+        Self::from_memory(device, image, image.width(), image.height(), 4, settings)
     }
 
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
     fn from_memory(
         device: &mut F,
         memory: &[u8],
-        width: usize,
-        channels: usize,
+        width: u32,
+        height: u32,
+        channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self>;
 
@@ -186,8 +186,7 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
         device: &mut F,
         image: &RgbaImage
     ) -> TextureResult<()> {
-        let width = image.width() as usize;
-        self.update_from_memory(device, image, width, 4)
+        self.update_from_memory(device, image, image.width(), image.height(), 4)
     }
 
     /// Update texture from memory buffer. Supported only RGBA and alpha channels images.
@@ -195,8 +194,9 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
         &mut self,
         device: &mut F,
         memory: &[u8],
-        width: usize,
-        channels: usize
+        width: u32,
+        height: u32,
+        channels: u8
     ) -> TextureResult<()>;
 }
 
@@ -224,11 +224,12 @@ pub trait Texture: TextureWithFactory<()> + Sized {
     #[inline(always)]
     fn from_memory(
         memory: &[u8],
-        width: usize,
-        channels: usize,
+        width: u32,
+        height: u32,
+        channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self> {
-        TextureWithFactory::from_memory(&mut (), memory, width, channels, settings)
+        TextureWithFactory::from_memory(&mut (), memory, width, height, channels, settings)
     }
 
     /// Update texture from path.
@@ -248,10 +249,12 @@ pub trait Texture: TextureWithFactory<()> + Sized {
     fn update_from_memory(
         &mut self,
         memory: &[u8],
-        width: usize,
-        channels: usize
+        width: u32,
+        height: u32,
+        channels: u8
     ) -> TextureResult<()> {
-        TextureWithFactory::update_from_memory(self, &mut (), memory, width, channels)
+        TextureWithFactory::update_from_memory(
+            self, &mut (), memory, width, height, channels)
     }
 }
 
