@@ -28,7 +28,6 @@ pub trait ImageSize {
 
 /// Texture creation parameters.
 pub struct TextureSettings {
-    flip_vertical: bool,
     convert_gamma: bool,
     /// Compress on GPU.
     compress: bool,
@@ -40,21 +39,10 @@ impl TextureSettings {
     /// Create default settings.
     pub fn new() -> TextureSettings {
         TextureSettings {
-            flip_vertical: false,
             convert_gamma: false,
             compress: false,
             generate_mipmap: false,
         }
-    }
-
-    /// Gets whether to flip vertical.
-    pub fn get_flip_vertical(&self) -> bool { self.flip_vertical }
-    /// Sets flip vertical.
-    pub fn set_flip_vertical(&mut self, val: bool) { self.flip_vertical = val; }
-    /// Sets flip vertical.
-    pub fn flip_vertical(mut self, val: bool) -> Self {
-        self.set_flip_vertical(val);
-        self
     }
 
     /// Gets wheter to convert gamma, treated as sRGB color space.
@@ -108,9 +96,9 @@ impl Display for TextureError {
     }
 }
 
-/// Implemented by RGBA8 textures.
+/// Implemented by rgba8 textures.
 pub trait Rgba8Texture<F>: ImageSize {
-    /// Create RGBA8 texture from memory.
+    /// Create rgba8 texture from memory.
     fn from_memory<S: Into<[u32; 2]>>(
         factory: &mut F,
         memory: &[u8],
@@ -118,7 +106,7 @@ pub trait Rgba8Texture<F>: ImageSize {
         settings: &TextureSettings
     ) -> TextureResult<Self>;
 
-    /// Update RGBA8 texture.
+    /// Update rgba8 texture.
     fn update<S: Into<[u32; 2]>>(
         &mut self,
         factory: &mut F,
