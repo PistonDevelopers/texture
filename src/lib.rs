@@ -2,11 +2,7 @@
 
 //! A library for texture conventions.
 
-extern crate image;
-
 use std::fmt::{ Display, Formatter, Error };
-use std::path::Path;
-use image::{ RgbaImage, ImageError, DynamicImage };
 
 pub mod ops;
 
@@ -29,7 +25,6 @@ pub trait ImageSize {
         h
     }
 }
-
 
 /// Texture creation parameters.
 pub struct TextureSettings {
@@ -101,28 +96,13 @@ pub type TextureResult<T> = Result<T, TextureError>;
 /// An enumeration of Texture and TextureWithDevice errors.
 #[derive(Debug)]
 pub enum TextureError {
-    /// The image openinng error.
-    ImageError(ImageError),
-
-    /// The channels number error.
-    InvalidNumberOfChannels(u8),
-
     /// The error in backend factory.
     FactoryError(String),
-}
-
-impl From<ImageError> for TextureError {
-    fn from(e: ImageError) -> Self {
-        TextureError::ImageError(e)
-    }
 }
 
 impl Display for TextureError {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         match *self {
-            TextureError::ImageError(ref e) => e.fmt(f),
-            TextureError::InvalidNumberOfChannels(n) =>
-                format!("Invalid number of channels: {}, expected 1 or 4", n).fmt(f),
             TextureError::FactoryError(ref s) => s.fmt(f)
         }
     }
@@ -130,32 +110,6 @@ impl Display for TextureError {
 
 /// Unified interface creating/updating texture over backends.
 pub trait TextureWithFactory<F>: ImageSize + Sized {
-
-    /// Create texture from path.
-    #[inline(always)]
-    fn from_path<P: AsRef<Path>>(
-        device: &mut F,
-        path: P,
-        settings: &TextureSettings
-    ) -> TextureResult<Self> {
-        let image = try!(image::open(path));
-        let image = match image {
-            DynamicImage::ImageRgba8(image) => image,
-            image => image.to_rgba()
-        };
-        Self::from_image(device, &image, settings)
-    }
-
-    /// Create texture from RGBA image.
-    #[inline(always)]
-    fn from_image(
-        device: &mut F,
-        image: &RgbaImage,
-        settings: &TextureSettings
-    ) -> TextureResult<Self> {
-        Self::from_memory(device, image, image.width(), image.height(), 4, settings)
-    }
-
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
     fn from_memory(
         device: &mut F,
@@ -165,31 +119,6 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
         channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self>;
-
-    /// Update texture from path.
-    #[inline(always)]
-    fn update_from_path<P: AsRef<Path>>(
-        &mut self,
-        device: &mut F,
-        path: P
-    ) -> TextureResult<()> {
-        let image = try!(image::open(path));
-        let image = match image {
-            DynamicImage::ImageRgba8(image) => image,
-            image => image.to_rgba()
-        };
-        self.update_from_image(device, &image)
-    }
-
-    /// Update texture from RGBA image.
-    #[inline(always)]
-    fn update_from_image(
-        &mut self,
-        device: &mut F,
-        image: &RgbaImage
-    ) -> TextureResult<()> {
-        self.update_from_memory(device, image, image.width(), image.height(), 4)
-    }
 
     /// Update texture from memory buffer. Supported only RGBA and alpha channels images.
     fn update_from_memory(
@@ -204,24 +133,6 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
 
 /// Interface for device independent backends.
 pub trait Texture: TextureWithFactory<()> + Sized {
-    /// Create texture from path.
-    #[inline(always)]
-    fn from_path<P: AsRef<Path>>(
-        path: P,
-        settings: &TextureSettings
-    ) -> TextureResult<Self> {
-        TextureWithFactory::from_path(&mut (), path, settings)
-    }
-
-    /// Create texture from RGBA image.
-    #[inline(always)]
-    fn from_image(
-        image: &RgbaImage,
-        settings: &TextureSettings
-    ) -> TextureResult<Self> {
-        TextureWithFactory::from_image(&mut (), image, settings)
-    }
-
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
     #[inline(always)]
     fn from_memory(
@@ -232,18 +143,6 @@ pub trait Texture: TextureWithFactory<()> + Sized {
         settings: &TextureSettings
     ) -> TextureResult<Self> {
         TextureWithFactory::from_memory(&mut (), memory, width, height, channels, settings)
-    }
-
-    /// Update texture from path.
-    #[inline(always)]
-    fn update_from_path<P: AsRef<Path>>(&mut self, path: P) -> TextureResult<()> {
-        TextureWithFactory::update_from_path(self, &mut (), path)
-    }
-
-    /// Update texture from RGBA image.
-    #[inline(always)]
-    fn update_from_image(&mut self, image: &RgbaImage) -> TextureResult<()> {
-        TextureWithFactory::update_from_image(self, &mut (), image)
     }
 
     /// Update texture from memory buffer. Supports only RGBA and alpha channels images.
