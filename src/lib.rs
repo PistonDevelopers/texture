@@ -114,8 +114,7 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
     fn from_memory(
         device: &mut F,
         memory: &[u8],
-        width: u32,
-        height: u32,
+        size: [u32; 2],
         channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self>;
@@ -125,8 +124,7 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
         &mut self,
         device: &mut F,
         memory: &[u8],
-        width: u32,
-        height: u32,
+        size: [u32; 2],
         channels: u8
     ) -> TextureResult<()>;
 }
@@ -137,12 +135,11 @@ pub trait Texture: TextureWithFactory<()> + Sized {
     #[inline(always)]
     fn from_memory(
         memory: &[u8],
-        width: u32,
-        height: u32,
+        size: [u32; 2],
         channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self> {
-        TextureWithFactory::from_memory(&mut (), memory, width, height, channels, settings)
+        TextureWithFactory::from_memory(&mut (), memory, size, channels, settings)
     }
 
     /// Update texture from memory buffer. Supports only RGBA and alpha channels images.
@@ -150,12 +147,11 @@ pub trait Texture: TextureWithFactory<()> + Sized {
     fn update_from_memory(
         &mut self,
         memory: &[u8],
-        width: u32,
-        height: u32,
+        size: [u32; 2],
         channels: u8
     ) -> TextureResult<()> {
         TextureWithFactory::update_from_memory(
-            self, &mut (), memory, width, height, channels)
+            self, &mut (), memory, size, channels)
     }
 }
 
