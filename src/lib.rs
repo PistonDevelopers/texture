@@ -26,10 +26,11 @@ pub trait ImageSize {
 
 /// Texture creation parameters.
 pub struct TextureSettings {
+    // Whether to convert gamma, treated as sRGB color space
     convert_gamma: bool,
-    /// Compress on GPU.
+    // Compress on GPU.
     compress: bool,
-    /// Generate mipmap chain.
+    // Generate mipmap chain.
     generate_mipmap: bool,
 }
 
@@ -43,7 +44,7 @@ impl TextureSettings {
         }
     }
 
-    /// Gets wheter to convert gamma, treated as sRGB color space.
+    /// Gets whether to convert gamma, treated as sRGB color space.
     pub fn get_convert_gamma(&self) -> bool { self.convert_gamma }
     /// Sets convert gamma.
     pub fn set_convert_gamma(&mut self, val: bool) { self.convert_gamma = val; }
