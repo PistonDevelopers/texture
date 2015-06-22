@@ -128,31 +128,3 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
         channels: u8
     ) -> TextureResult<()>;
 }
-
-/// Interface for device independent backends.
-pub trait Texture: TextureWithFactory<()> + Sized {
-    /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
-    #[inline(always)]
-    fn from_memory<S: Into<[u32; 2]>>(
-        memory: &[u8],
-        size: S,
-        channels: u8,
-        settings: &TextureSettings
-    ) -> TextureResult<Self> {
-        TextureWithFactory::from_memory(&mut (), memory, size, channels, settings)
-    }
-
-    /// Update texture from memory buffer. Supports only RGBA and alpha channels images.
-    #[inline(always)]
-    fn update_from_memory<S: Into<[u32; 2]>>(
-        &mut self,
-        memory: &[u8],
-        size: S,
-        channels: u8
-    ) -> TextureResult<()> {
-        TextureWithFactory::update_from_memory(
-            self, &mut (), memory, size, channels)
-    }
-}
-
-impl<T: TextureWithFactory<()>> Texture for T {}
