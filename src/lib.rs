@@ -111,20 +111,20 @@ impl Display for TextureError {
 /// Unified interface creating/updating texture over backends.
 pub trait TextureWithFactory<F>: ImageSize + Sized {
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
-    fn from_memory(
+    fn from_memory<S: Into<[u32; 2]>>(
         device: &mut F,
         memory: &[u8],
-        size: [u32; 2],
+        size: S,
         channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self>;
 
     /// Update texture from memory buffer. Supported only RGBA and alpha channels images.
-    fn update_from_memory(
+    fn update_from_memory<S: Into<[u32; 2]>>(
         &mut self,
         device: &mut F,
         memory: &[u8],
-        size: [u32; 2],
+        size: S,
         channels: u8
     ) -> TextureResult<()>;
 }
@@ -133,9 +133,9 @@ pub trait TextureWithFactory<F>: ImageSize + Sized {
 pub trait Texture: TextureWithFactory<()> + Sized {
     /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
     #[inline(always)]
-    fn from_memory(
+    fn from_memory<S: Into<[u32; 2]>>(
         memory: &[u8],
-        size: [u32; 2],
+        size: S,
         channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self> {
@@ -144,10 +144,10 @@ pub trait Texture: TextureWithFactory<()> + Sized {
 
     /// Update texture from memory buffer. Supports only RGBA and alpha channels images.
     #[inline(always)]
-    fn update_from_memory(
+    fn update_from_memory<S: Into<[u32; 2]>>(
         &mut self,
         memory: &[u8],
-        size: [u32; 2],
+        size: S,
         channels: u8
     ) -> TextureResult<()> {
         TextureWithFactory::update_from_memory(
