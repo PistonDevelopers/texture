@@ -93,7 +93,7 @@ impl TextureSettings {
 /// Result of an texture creating/updating process.
 pub type TextureResult<T> = Result<T, TextureError>;
 
-/// An enumeration of Texture and TextureWithDevice errors.
+/// Texture errors.
 #[derive(Debug)]
 pub enum TextureError {
     /// The error in backend factory.
@@ -108,23 +108,21 @@ impl Display for TextureError {
     }
 }
 
-/// Unified interface creating/updating texture over backends.
-pub trait TextureWithFactory<F>: ImageSize + Sized {
-    /// Create texture from memory buffer. Supported only RGBA and alpha channels images.
+/// Implemented by RGBA8 textures.
+pub trait Rgba8Texture<F>: ImageSize {
+    /// Create RGBA8 texture from memory.
     fn from_memory<S: Into<[u32; 2]>>(
-        device: &mut F,
+        factory: &mut F,
         memory: &[u8],
         size: S,
-        channels: u8,
         settings: &TextureSettings
     ) -> TextureResult<Self>;
 
-    /// Update texture from memory buffer. Supported only RGBA and alpha channels images.
-    fn update_from_memory<S: Into<[u32; 2]>>(
+    /// Update RGBA8 texture.
+    fn update<S: Into<[u32; 2]>>(
         &mut self,
-        device: &mut F,
+        factory: &mut F,
         memory: &[u8],
         size: S,
-        channels: u8
     ) -> TextureResult<()>;
 }
