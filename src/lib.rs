@@ -2,8 +2,6 @@
 
 //! A library for texture conventions.
 
-use std::fmt::{ Display, Formatter, Error };
-
 pub mod ops;
 
 /// Implemented by all images to be used with generic algorithms.
@@ -78,33 +76,18 @@ impl TextureSettings {
     }
 }
 
-/// Result of an texture creating/updating process.
-pub type TextureResult<T> = Result<T, TextureError>;
-
-/// Texture errors.
-#[derive(Debug)]
-pub enum TextureError {
-    /// The error in backend factory.
-    FactoryError(String),
-}
-
-impl Display for TextureError {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        match *self {
-            TextureError::FactoryError(ref s) => s.fmt(f)
-        }
-    }
-}
-
 /// Implemented by rgba8 textures.
 pub trait Rgba8Texture<F>: ImageSize {
+    /// The error when creating or updating texture.
+    type Error;
+
     /// Create rgba8 texture from memory.
-    fn from_memory<S: Into<[u32; 2]>>(
+    fn create<S: Into<[u32; 2]>>(
         factory: &mut F,
         memory: &[u8],
         size: S,
         settings: &TextureSettings
-    ) -> TextureResult<Self>;
+    ) -> Result<Self, Self::Error>;
 
     /// Update rgba8 texture.
     fn update<S: Into<[u32; 2]>>(
@@ -112,5 +95,5 @@ pub trait Rgba8Texture<F>: ImageSize {
         factory: &mut F,
         memory: &[u8],
         size: S,
-    ) -> TextureResult<()>;
+    ) -> Result<(), Self::Error>;
 }
