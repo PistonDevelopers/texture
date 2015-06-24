@@ -1,11 +1,11 @@
 [package]
 
 name = "piston-texture"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
     "bvssvni <bvssvni@gmail.com>"
 ]
-keywords = ["texture", "generic"]
+keywords = ["texture", "generic", "piston"]
 description = "A library for texture conventions"
 license = "MIT"
 readme = "README.md"
