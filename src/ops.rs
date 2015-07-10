@@ -25,9 +25,9 @@ pub fn alpha_to_rgba8(memory: &[u8], size: [u32; 2]) -> Vec<u8> {
     let mut res = Vec::with_capacity(capacity);
     for y in (0..height) {
         for x in (0..width) {
-            res.push(0);
-            res.push(0);
-            res.push(0);
+            res.push(255);
+            res.push(255);
+            res.push(255);
             res.push(memory[x + y * stride]);
         }
     }
