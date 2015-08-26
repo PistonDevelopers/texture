@@ -78,7 +78,7 @@ impl TextureSettings {
 }
 
 /// Implemented by rgba8 textures.
-pub trait Rgba8Texture<F>: ImageSize {
+pub trait Rgba8Texture<F>: ImageSize + Sized {
     /// The error when creating or updating texture.
     type Error;
 
