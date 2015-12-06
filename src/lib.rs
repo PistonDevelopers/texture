@@ -32,6 +32,12 @@ pub struct TextureSettings {
     compress: bool,
     // Generate mipmap chain.
     generate_mipmap: bool,
+    // Filtering Mode for Minifying
+    min: Filter,
+    // Filtering Mode for Magnifying
+    mag: Filter,
+    // Filtering Mode for Minify Mipmapping
+    mipmap: Filter
 }
 
 impl TextureSettings {
@@ -41,6 +47,9 @@ impl TextureSettings {
             convert_gamma: false,
             compress: false,
             generate_mipmap: false,
+            min: Filter::Linear,
+            mag: Filter::Linear,
+            mipmap: Filter::Linear,
         }
     }
 
@@ -75,6 +84,58 @@ impl TextureSettings {
         self.set_generate_mipmap(val);
         self
     }
+
+    /// Gets minify filter.
+    pub fn get_min(&self) -> Filter { self.min }
+    /// Sets minify filter.
+    pub fn set_min(&mut self, val: Filter) { 
+        self.min = val
+    }
+    /// Sets minify filter.
+    pub fn min(mut self, val: Filter) -> Self {
+        self.set_min(val);
+        self
+    }
+
+    /// Gets magnify filter
+    pub fn get_mag(&self) -> Filter { self.mag }
+    /// Sets magnify filter
+    pub fn set_mag(&mut self, val: Filter) {
+        self.mag = val;
+    }
+    /// Sets magnify filter
+    pub fn mag(mut self, val: Filter) -> Self {
+        self.set_mag(val);
+        self
+    }
+
+    /// Gets minify mipmap filter
+    pub fn get_mipmap(&self) -> Filter { self.mipmap }
+    /// Sets magnify mipmap filter, and sets generate_mipmap to true.
+    pub fn set_mipmap(&mut self, val: Filter) {
+        self.set_generate_mipmap(true);
+        self.mag = val;
+    }
+    /// Sets magnify mipmap filter, and sets generate_mipmap to true
+    pub fn mipmap(mut self, val: Filter) -> Self {
+        self.set_mag(val);
+        self
+    }
+
+    /// Returns the min and mag filter
+    pub fn get_filter(&self) -> (Filter, Filter) { (self.min, self.mag) }
+    /// Sets the min and mag filter
+    pub fn set_filter(&mut self, val: Filter) {
+        self.set_min(val);
+        self.set_mag(val);
+    }
+
+    /// Sets the min and mag filter
+    pub fn filter(mut self, val: Filter) -> Self {
+        self.set_filter(val);
+        self
+    }
+
 }
 
 /// Implemented by rgba8 textures.
@@ -97,4 +158,13 @@ pub trait Rgba8Texture<F>: ImageSize + Sized {
         memory: &[u8],
         size: S,
     ) -> Result<(), Self::Error>;
+}
+
+/// OpenGL Resize Filters
+#[derive(Copy, Clone)]
+pub enum Filter {
+    /// A Weighted Linear Blend
+    Linear,
+    /// Nearest Texel
+    Nearest
 }
