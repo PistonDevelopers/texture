@@ -1,6 +1,12 @@
 #![deny(missing_docs)]
 
-//! A library for texture conventions.
+//! A generic library for textures.
+//!
+//! This library is used in Piston for generic code when working with textures.
+//!
+//! The `ImageSize` trait is used for passing textures around for rendering.
+//! For more information, see
+//! [Piston-Graphics](https://github.com/pistondevelopers/graphics).
 
 pub mod ops;
 
@@ -88,7 +94,7 @@ impl TextureSettings {
     /// Gets minify filter.
     pub fn get_min(&self) -> Filter { self.min }
     /// Sets minify filter.
-    pub fn set_min(&mut self, val: Filter) { 
+    pub fn set_min(&mut self, val: Filter) {
         self.min = val
     }
     /// Sets minify filter.
@@ -138,30 +144,45 @@ impl TextureSettings {
 
 }
 
-/// Implemented by rgba8 textures.
-pub trait Rgba8Texture<F>: ImageSize + Sized {
-    /// The error when creating or updating texture.
+/// Texture format.
+#[derive(Copy, Clone, Debug)]
+pub enum Format {
+    /// `(red, green, blue, alpha)` with values 0-255.
+    Rgba8,
+}
+
+/// Implemented by textures for creation.
+pub trait CreateTexture<F>: ImageSize + Sized {
+    /// The error when creating texture.
     type Error;
 
-    /// Create rgba8 texture from memory.
+    /// Create texture from memory.
     fn create<S: Into<[u32; 2]>>(
         factory: &mut F,
+        format: Format,
         memory: &[u8],
         size: S,
         settings: &TextureSettings
     ) -> Result<Self, Self::Error>;
+}
 
-    /// Update rgba8 texture.
+/// Implemented by textures for updating.
+pub trait UpdateTexture<F>: ImageSize + Sized {
+    /// The error when updating texture.
+    type Error;
+
+    /// Update texture.
     fn update<S: Into<[u32; 2]>>(
         &mut self,
         factory: &mut F,
+        format: Format,
         memory: &[u8],
         size: S,
     ) -> Result<(), Self::Error>;
 }
 
-/// OpenGL Resize Filters
-#[derive(Copy, Clone)]
+/// Sampling filter
+#[derive(Copy, Clone, Debug)]
 pub enum Filter {
     /// A Weighted Linear Blend
     Linear,
