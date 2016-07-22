@@ -171,14 +171,20 @@ pub trait UpdateTexture<F>: ImageSize + Sized {
     /// The error when updating texture.
     type Error;
 
-    /// Update texture.
-    fn update<S: Into<[u32; 2]>>(
+    /// Update the texture.
+    ///
+    /// The `offset` and `size` arguments represent the position and dimensions of the sub-section
+    /// of the texture that is to be updated with the given `memory`.
+    fn update<O, S>(
         &mut self,
         factory: &mut F,
         format: Format,
         memory: &[u8],
+        offset: O,
         size: S,
-    ) -> Result<(), Self::Error>;
+    ) -> Result<(), Self::Error>
+        where O: Into<[u32; 2]>,
+              S: Into<[u32; 2]>;
 }
 
 /// Sampling filter
