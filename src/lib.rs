@@ -149,6 +149,15 @@ impl TextureSettings {
 pub enum Format {
     /// `(red, green, blue, alpha)` with values 0-255.
     Rgba8,
+    /// `(red, green, blue, alpha)` with values 0-255.
+    ///
+    /// From wikipedia:
+    ///
+    /// "Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single
+    /// numerical value. The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0)
+    /// section near black, and a non-linear section elsewhere involving a 2.4 exponent and a gamma
+    /// (slope of log output versus log input) changing from 1.0 through about 2.3."
+    Srgba8,
 }
 
 /// Implemented by textures for creation.
