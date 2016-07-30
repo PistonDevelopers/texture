@@ -153,6 +153,9 @@ pub enum Format {
     ///
     /// From wikipedia:
     ///
+    /// "sRGB is a standard RGB color space created cooperatively by HP and Microsoft in 1996 for
+    /// use on monitors, printers and the Internet.
+    ///
     /// "Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single
     /// numerical value. The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0)
     /// section near black, and a non-linear section elsewhere involving a 2.4 exponent and a gamma
