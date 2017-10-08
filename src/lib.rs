@@ -31,6 +31,7 @@ pub trait ImageSize {
 }
 
 /// Texture creation parameters.
+#[derive(Clone, Copy)]
 pub struct TextureSettings {
     // Whether to convert gamma, treated as sRGB color space
     convert_gamma: bool,
