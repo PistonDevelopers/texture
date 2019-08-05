@@ -152,11 +152,14 @@ pub enum Format {
     Rgba8,
 }
 
-/// Implemented by textures for creation.
-pub trait CreateTexture<F>: ImageSize + Sized {
-    /// The error when creating texture.
+/// Implemented by texture operations.
+pub trait TextureOp<F> {
+    /// The error when performing an operation.
     type Error;
+}
 
+/// Implemented by textures for creation.
+pub trait CreateTexture<F>: TextureOp<F> + ImageSize + Sized {
     /// Create texture from memory.
     fn create<S: Into<[u32; 2]>>(
         factory: &mut F,
@@ -168,10 +171,7 @@ pub trait CreateTexture<F>: ImageSize + Sized {
 }
 
 /// Implemented by textures for updating.
-pub trait UpdateTexture<F>: ImageSize + Sized {
-    /// The error when updating texture.
-    type Error;
-
+pub trait UpdateTexture<F>: TextureOp<F> + ImageSize + Sized {
     /// Update the texture.
     ///
     /// The `offset` and `size` arguments represent the position and dimensions of the sub-section
