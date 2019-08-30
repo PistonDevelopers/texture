@@ -249,7 +249,7 @@ pub enum Filter {
 }
 
 /// Wrap mode
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Wrap {
     /// Repeats the texture by ignoring the integer part of the coordinate.
     Repeat,
