@@ -44,7 +44,11 @@ pub struct TextureSettings {
     // Filtering Mode for Magnifying
     mag: Filter,
     // Filtering Mode for Minify Mipmapping
-    mipmap: Filter
+    mipmap: Filter,
+    // Wrapping mode for s coordinate
+    wrap_s: Wrap,
+    // Wrapping mode for t coordinate
+    wrap_t: Wrap,
 }
 
 impl TextureSettings {
@@ -57,6 +61,8 @@ impl TextureSettings {
             min: Filter::Linear,
             mag: Filter::Linear,
             mipmap: Filter::Linear,
+            wrap_s: Wrap::ClampToEdge,
+            wrap_t: Wrap::ClampToEdge
         }
     }
 
@@ -143,6 +149,34 @@ impl TextureSettings {
         self
     }
 
+    /// Gets the wrapping mode for the s coordinate
+    pub fn get_wrap_s(&self) -> Wrap {
+        self.wrap_s
+    }
+    /// Sets the wrapping mode for the s coordinate
+    pub fn set_wrap_s(& mut self, val: Wrap) {
+        self.wrap_s = val
+    }
+    /// Sets the wrapping mode for the s coordinate
+    pub fn wrap_s(mut self, val: Wrap) -> Self {
+        self.set_wrap_s(val);
+        self
+    }
+
+    /// Gets the wrapping mode for the t coordinate
+    pub fn get_wrap_t(&self) -> Wrap {
+        self.wrap_t
+    }
+    /// Sets the wrapping mode for the t coordinate
+    pub fn set_wrap_t(& mut self, val: Wrap) {
+        self.wrap_t = val
+    }
+    /// Sets the wrapping mode for the t coordinate
+    pub fn wrap_t(mut self, val: Wrap) -> Self {
+        self.set_wrap_t(val);
+        self
+    }
+
 }
 
 /// Texture format.
@@ -195,4 +229,20 @@ pub enum Filter {
     Linear,
     /// Nearest Texel
     Nearest
+}
+
+/// Wrap mode
+#[derive(Copy, Clone, Debug)]
+pub enum Wrap {
+    /// Repeats the texture by ignoring the integer part of the coordinate.
+    Repeat,
+    /// Repeats the texture and mirrors it, when the integer part of the coordinate is odd.
+    MirroredRepeat,
+    /// The coordinate will be clamped between 0 and 1.
+    ClampToEdge,
+    /// Coordinates outside the range [0.0, 1.0] will be given a border color.
+    ClampToBorder {
+        /// The border color to which to clamp to.
+        color: [f32;4]
+    }
 }
