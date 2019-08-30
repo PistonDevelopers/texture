@@ -49,6 +49,8 @@ pub struct TextureSettings {
     wrap_s: Wrap,
     // Wrapping mode for t coordinate
     wrap_t: Wrap,
+    // Border Color if ClampToBorder is specified as wrap mode
+    border_color: [f32; 4],
 }
 
 impl TextureSettings {
@@ -62,7 +64,8 @@ impl TextureSettings {
             mag: Filter::Linear,
             mipmap: Filter::Linear,
             wrap_s: Wrap::ClampToEdge,
-            wrap_t: Wrap::ClampToEdge
+            wrap_t: Wrap::ClampToEdge,
+            border_color: [0.0, 0.0, 0.0, 1.0],
         }
     }
 
@@ -177,6 +180,20 @@ impl TextureSettings {
         self
     }
 
+    /// Gets the border color
+    pub fn get_border_color(&self) -> [f32; 4] {
+        self.border_color
+    }
+    /// Sets the border color
+    pub fn set_border_color(&mut self, val: [f32; 4]) {
+        self.border_color = val
+    }
+    /// Sets the border color
+    pub fn border_color(mut self, val: [f32; 4]) -> Self {
+        self.set_border_color(val);
+        self
+    }
+
 }
 
 /// Texture format.
@@ -241,8 +258,5 @@ pub enum Wrap {
     /// The coordinate will be clamped between 0 and 1.
     ClampToEdge,
     /// Coordinates outside the range [0.0, 1.0] will be given a border color.
-    ClampToBorder {
-        /// The border color to which to clamp to.
-        color: [f32;4]
-    }
+    ClampToBorder,
 }
