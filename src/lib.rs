@@ -46,9 +46,9 @@ pub struct TextureSettings {
     // Filtering Mode for Minify Mipmapping
     mipmap: Filter,
     // Wrapping mode for s coordinate
-    wrap_s: Wrap,
+    wrap_u: Wrap,
     // Wrapping mode for t coordinate
-    wrap_t: Wrap,
+    wrap_v: Wrap,
     // Border Color if ClampToBorder is specified as wrap mode
     border_color: [f32; 4],
 }
@@ -63,8 +63,8 @@ impl TextureSettings {
             min: Filter::Linear,
             mag: Filter::Linear,
             mipmap: Filter::Linear,
-            wrap_s: Wrap::ClampToEdge,
-            wrap_t: Wrap::ClampToEdge,
+            wrap_u: Wrap::ClampToEdge,
+            wrap_v: Wrap::ClampToEdge,
             border_color: [0.0, 0.0, 0.0, 1.0],
         }
     }
@@ -152,31 +152,31 @@ impl TextureSettings {
         self
     }
 
-    /// Gets the wrapping mode for the s coordinate
-    pub fn get_wrap_s(&self) -> Wrap {
-        self.wrap_s
+    /// Gets the wrapping mode for the u coordinate
+    pub fn get_wrap_u(&self) -> Wrap {
+        self.wrap_u
     }
-    /// Sets the wrapping mode for the s coordinate
-    pub fn set_wrap_s(& mut self, val: Wrap) {
-        self.wrap_s = val
+    /// Sets the wrapping mode for the u coordinate
+    pub fn set_wrap_u(& mut self, val: Wrap) {
+        self.wrap_u = val
     }
-    /// Sets the wrapping mode for the s coordinate
-    pub fn wrap_s(mut self, val: Wrap) -> Self {
-        self.set_wrap_s(val);
+    /// Sets the wrapping mode for the u coordinate
+    pub fn wrap_u(mut self, val: Wrap) -> Self {
+        self.set_wrap_u(val);
         self
     }
 
-    /// Gets the wrapping mode for the t coordinate
-    pub fn get_wrap_t(&self) -> Wrap {
-        self.wrap_t
+    /// Gets the wrapping mode for the v coordinate
+    pub fn get_wrap_v(&self) -> Wrap {
+        self.wrap_v
     }
-    /// Sets the wrapping mode for the t coordinate
-    pub fn set_wrap_t(& mut self, val: Wrap) {
-        self.wrap_t = val
+    /// Sets the wrapping mode for the v coordinate
+    pub fn set_wrap_v(& mut self, val: Wrap) {
+        self.wrap_v = val
     }
-    /// Sets the wrapping mode for the t coordinate
-    pub fn wrap_t(mut self, val: Wrap) -> Self {
-        self.set_wrap_t(val);
+    /// Sets the wrapping mode for the v coordinate
+    pub fn wrap_v(mut self, val: Wrap) -> Self {
+        self.set_wrap_v(val);
         self
     }
 
