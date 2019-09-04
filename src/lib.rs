@@ -44,7 +44,13 @@ pub struct TextureSettings {
     // Filtering Mode for Magnifying
     mag: Filter,
     // Filtering Mode for Minify Mipmapping
-    mipmap: Filter
+    mipmap: Filter,
+    // Wrapping mode for s coordinate
+    wrap_u: Wrap,
+    // Wrapping mode for t coordinate
+    wrap_v: Wrap,
+    // Border Color if ClampToBorder is specified as wrap mode
+    border_color: [f32; 4],
 }
 
 impl TextureSettings {
@@ -57,6 +63,9 @@ impl TextureSettings {
             min: Filter::Linear,
             mag: Filter::Linear,
             mipmap: Filter::Linear,
+            wrap_u: Wrap::ClampToEdge,
+            wrap_v: Wrap::ClampToEdge,
+            border_color: [0.0, 0.0, 0.0, 1.0],
         }
     }
 
@@ -143,6 +152,48 @@ impl TextureSettings {
         self
     }
 
+    /// Gets the wrapping mode for the u coordinate
+    pub fn get_wrap_u(&self) -> Wrap {
+        self.wrap_u
+    }
+    /// Sets the wrapping mode for the u coordinate
+    pub fn set_wrap_u(& mut self, val: Wrap) {
+        self.wrap_u = val
+    }
+    /// Sets the wrapping mode for the u coordinate
+    pub fn wrap_u(mut self, val: Wrap) -> Self {
+        self.set_wrap_u(val);
+        self
+    }
+
+    /// Gets the wrapping mode for the v coordinate
+    pub fn get_wrap_v(&self) -> Wrap {
+        self.wrap_v
+    }
+    /// Sets the wrapping mode for the v coordinate
+    pub fn set_wrap_v(& mut self, val: Wrap) {
+        self.wrap_v = val
+    }
+    /// Sets the wrapping mode for the v coordinate
+    pub fn wrap_v(mut self, val: Wrap) -> Self {
+        self.set_wrap_v(val);
+        self
+    }
+
+    /// Gets the border color
+    pub fn get_border_color(&self) -> [f32; 4] {
+        self.border_color
+    }
+    /// Sets the border color
+    pub fn set_border_color(&mut self, val: [f32; 4]) {
+        self.border_color = val
+    }
+    /// Sets the border color
+    pub fn border_color(mut self, val: [f32; 4]) -> Self {
+        self.set_border_color(val);
+        self
+    }
+
 }
 
 /// Texture format.
@@ -195,4 +246,17 @@ pub enum Filter {
     Linear,
     /// Nearest Texel
     Nearest
+}
+
+/// Wrap mode
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum Wrap {
+    /// Repeats the texture by ignoring the integer part of the coordinate.
+    Repeat,
+    /// Repeats the texture and mirrors it, when the integer part of the coordinate is odd.
+    MirroredRepeat,
+    /// The coordinate will be clamped between 0 and 1.
+    ClampToEdge,
+    /// Coordinates outside the range [0.0, 1.0] will be given a border color.
+    ClampToBorder,
 }
