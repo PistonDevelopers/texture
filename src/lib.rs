@@ -206,7 +206,7 @@ pub enum Format {
 /// Implemented by texture operations.
 pub trait TextureOp<F> {
     /// The error when performing an operation.
-    type Error;
+    type Error: core::fmt::Debug;
 }
 
 /// Implemented by textures for creation.
